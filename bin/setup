@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if [ -v UDB_SETUP_COMPLETE ]; then
+if [ -v "$UDB_SETUP_COMPLETE" ]; then
   return
 fi
 UDB_SETUP_COMPLETE=true
@@ -125,6 +125,9 @@ if [ "${CONTAINER_TYPE}" == "docker" ] || [ "${CONTAINER_TYPE}" == "podman" ]; t
     if [ "${CONTAINER_TYPE}" == "podman" ]; then
       # Use --userns=keep-id for rootless podman to properly map user IDs with SELinux
       CONTAINER_RUN_FLAGS="${CONTAINER_RUN_FLAGS} --userns=keep-id"
+    elif [ "$(uname -s)" == "Darwin" ]; then
+      # do nothing
+      true
     else
       # Copy in /etc/{passwd,group} to get the user mappings
       getent passwd > "${ROOT}/.cache/passwd"
